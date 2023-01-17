@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watchAll",
     "build": "tsc",
     "lint": "eslint ."
   },
