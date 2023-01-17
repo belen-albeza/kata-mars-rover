@@ -1,0 +1,36 @@
+{
+  "name": "kata-mars-rover",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mars Rover kata solved in TypeScript",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belen-albeza/kata-mars-rover.git"
+  },
+  "author": "Belén \"Benko\" Albeza",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/belen-albeza/kata-mars-rover/issues"
+  },
+  "homepage": "https://github.com/belen-albeza/kata-mars-rover#readme",
+  "devDependencies": {
+    "@types/jest": "^29.2.5",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.3.1",
+    "prettier": "^2.8.3",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}
