@@ -36,5 +36,31 @@ describe("Rover", () => {
         r.run("?");
       }).toThrowError(/syntax error/i);
     });
+
+    describe("Moves forward", () => {
+      it("Moves the rover forward when facing north", () => {
+        const r = new Rover([0, 0], Direction.North);
+        r.run("f");
+        expect(r.position).toStrictEqual([0, -1]);
+      });
+
+      it("Moves the rover forward when facing east", () => {
+        const r = new Rover([0, 0], Direction.East);
+        r.run("f");
+        expect(r.position).toStrictEqual([1, 0]);
+      });
+
+      it("Moves the rover forward when facing south", () => {
+        const r = new Rover([0, 0], Direction.South);
+        r.run("f");
+        expect(r.position).toStrictEqual([0, 1]);
+      });
+
+      it("Moves the rover forward when facing west", () => {
+        const r = new Rover([0, 0], Direction.West);
+        r.run("f");
+        expect(r.position).toStrictEqual([-1, 0]);
+      });
+    });
   });
 });
