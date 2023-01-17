@@ -6,6 +6,11 @@ export enum Direction {
   South = "south",
   West = "west",
 }
+
+export enum Command {
+  NoOp = " ",
+}
+
 export class Rover {
   readonly position: Point;
   readonly direction: Direction;
@@ -17,4 +22,19 @@ export class Rover {
     this.position = position;
     this.direction = direction;
   }
+
+  run(program: string) {
+    const _ = parseProgram(program);
+  }
+}
+
+function parseProgram(program: string): Command[] {
+  return [...program].map((x) => {
+    switch (x) {
+      case " ":
+        return Command.NoOp;
+      default:
+        throw new Error(`Syntax error. Unrecognized command: '${x}'`);
+    }
+  });
 }
