@@ -62,5 +62,31 @@ describe("Rover", () => {
         expect(r.position).toStrictEqual([-1, 0]);
       });
     });
+
+    describe("Moves backward", () => {
+      it("Moves the rover backward when facing north", () => {
+        const r = new Rover([0, 0], Direction.North);
+        r.run("b");
+        expect(r.position).toStrictEqual([0, 1]);
+      });
+
+      it("Moves the rover backward when facing east", () => {
+        const r = new Rover([0, 0], Direction.East);
+        r.run("b");
+        expect(r.position).toStrictEqual([-1, 0]);
+      });
+
+      it("Moves the rover backward when facing south", () => {
+        const r = new Rover([0, 0], Direction.South);
+        r.run("b");
+        expect(r.position).toStrictEqual([0, -1]);
+      });
+
+      it("Moves the rover backward when facing west", () => {
+        const r = new Rover([0, 0], Direction.West);
+        r.run("b");
+        expect(r.position).toStrictEqual([1, 0]);
+      });
+    });
   });
 });

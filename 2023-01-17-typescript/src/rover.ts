@@ -10,6 +10,7 @@ export enum Direction {
 export enum Command {
   NoOp = " ",
   Forward = "forward",
+  Backward = "backward",
 }
 
 export class Rover {
@@ -31,12 +32,16 @@ export class Rover {
         case Command.NoOp:
           break;
         case Command.Forward:
-          this.move();
+          this.move(1);
+          break;
+        case Command.Backward:
+          this.move(-1);
+          break;
       }
     }
   }
 
-  move() {
+  private move(way: 1 | -1) {
     const deltaForDirection = () => {
       switch (this.direction) {
         case Direction.North:
@@ -51,7 +56,7 @@ export class Rover {
     };
 
     const [x, y] = deltaForDirection();
-    this.position = [this.position[0] + x, this.position[1] + y];
+    this.position = [this.position[0] + x * way, this.position[1] + y * way];
   }
 
   get position(): Readonly<Point> {
@@ -66,6 +71,8 @@ export class Rover {
 function parseProgram(program: string): Command[] {
   return [...program].map((x) => {
     switch (x) {
+      case "b":
+        return Command.Backward;
       case "f":
         return Command.Forward;
       case " ":
