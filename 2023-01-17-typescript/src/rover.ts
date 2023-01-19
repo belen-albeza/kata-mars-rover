@@ -7,41 +7,30 @@ export enum Direction {
   West = "west",
 }
 
-export enum Command {
-  NoOp = " ",
-  Forward = "forward",
-  Backward = "backward",
+interface CPU {
+  run(program: string, rover: Rover): void;
 }
 
 export class Rover {
   _position: Point;
   readonly direction: Direction;
+  readonly cpu: CPU;
 
   constructor(
+    cpu: CPU,
     position: Point = [0, 0],
     direction: Direction = Direction.North
   ) {
     this._position = position;
     this.direction = direction;
+    this.cpu = cpu;
   }
 
   run(program: string) {
-    const commands = parseProgram(program);
-    for (const cmd of commands) {
-      switch (cmd) {
-        case Command.NoOp:
-          break;
-        case Command.Forward:
-          this.move(1);
-          break;
-        case Command.Backward:
-          this.move(-1);
-          break;
-      }
-    }
+    this.cpu.run(program, this);
   }
 
-  private move(way: 1 | -1) {
+  move(way: 1 | -1) {
     const deltaForDirection = () => {
       switch (this.direction) {
         case Direction.North:
@@ -66,19 +55,4 @@ export class Rover {
   private set position(value: Readonly<Point>) {
     this._position = [value[0], value[1]];
   }
-}
-
-function parseProgram(program: string): Command[] {
-  return [...program].map((x) => {
-    switch (x) {
-      case "b":
-        return Command.Backward;
-      case "f":
-        return Command.Forward;
-      case " ":
-        return Command.NoOp;
-      default:
-        throw new Error(`Syntax error. Unrecognized command: '${x}'`);
-    }
-  });
 }
