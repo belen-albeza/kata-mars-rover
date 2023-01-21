@@ -26,8 +26,20 @@ describe("Mars Rover integration", () => {
   describe("Program running", () => {
     it("Runs a program that moves and turns the rover", () => {
       const r = anyRoverWithVM([0, 0], Direction.East);
+
       r.run("fflb rr");
+
       expect(r.position).toStrictEqual([2, 1]);
+      expect(r.direction).toBe(Direction.South);
+    });
+
+    it("Runs a program that moves the rover towards an obstacle", () => {
+      const map = Map.fromString(" 🪨\n  ");
+      const r = anyRoverWithVM([0, 0], Direction.North, map);
+
+      r.run("rfrf");
+
+      expect(r.position).toStrictEqual([0, 1]);
       expect(r.direction).toBe(Direction.South);
     });
   });

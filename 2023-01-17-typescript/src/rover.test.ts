@@ -168,4 +168,16 @@ describe("Rover", () => {
       expect(r.position).toStrictEqual([1, 0]);
     });
   });
+
+  describe("Collision against obstacles", () => {
+    it("Does not move over obstacles", () => {
+      const map = anyMapWithSize(5);
+      map.hasObstacleAt.mockReturnValue(true);
+      const r = new Rover(anyCPU(), map, [0, 0], Direction.East);
+
+      r.move(1);
+
+      expect(r.position).toStrictEqual([0, 0]);
+    });
+  });
 });

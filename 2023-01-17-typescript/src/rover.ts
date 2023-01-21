@@ -81,6 +81,10 @@ export class Rover {
     const x = modulo(value[0], this.map.width);
     const y = modulo(value[1], this.map.height);
 
+    if (this.map.hasObstacleAt(x, y)) {
+      return;
+    }
+
     this._position = [x, y];
   }
 
