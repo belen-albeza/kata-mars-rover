@@ -2,10 +2,13 @@ export enum Command {
   NoOp = " ",
   Forward = "forward",
   Backward = "backward",
+  Left = "left",
+  Right = "right",
 }
 
 export interface Vehicle {
   move(way: 1 | -1): void;
+  turn(way: 1 | -1): void;
 }
 
 export class VM {
@@ -21,6 +24,12 @@ export class VM {
         case Command.Backward:
           vehicle.move(-1);
           break;
+        case Command.Left:
+          vehicle.turn(-1);
+          break;
+        case Command.Right:
+          vehicle.turn(1);
+          break;
       }
     }
   }
@@ -29,6 +38,10 @@ export class VM {
 function parseProgram(program: string): Command[] {
   return [...program].map((x) => {
     switch (x) {
+      case "r":
+        return Command.Right;
+      case "l":
+        return Command.Left;
       case "b":
         return Command.Backward;
       case "f":

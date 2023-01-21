@@ -17,16 +17,11 @@ describe("Mars Rover integration", () => {
   });
 
   describe("Program running", () => {
-    it("Moves the rover forward when receiving a 'f' command", () => {
-      const r = anyRoverWithVM();
-      r.run("f");
-      expect(r.position).toStrictEqual([0, -1]);
-    });
-
-    it("Moves the rover backward when receiving a 'b' command", () => {
-      const r = anyRoverWithVM();
-      r.run("b");
-      expect(r.position).toStrictEqual([0, 1]);
+    it("Runs a program that moves and turns the rover", () => {
+      const r = anyRoverWithVM([0, 0], Direction.East);
+      r.run("fflb rr");
+      expect(r.position).toStrictEqual([2, 1]);
+      expect(r.direction).toBe(Direction.South);
     });
   });
 });
