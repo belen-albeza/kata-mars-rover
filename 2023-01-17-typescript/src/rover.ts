@@ -1,3 +1,5 @@
+import { modulo } from "./utils";
+
 export type Point = [number, number];
 
 export enum Direction {
@@ -10,6 +12,7 @@ export enum Direction {
 export interface Map {
   width: number;
   height: number;
+  hasObstacleAt: (x: number, y: number) => boolean;
 }
 
 interface CPU {
@@ -17,16 +20,16 @@ interface CPU {
 }
 
 export class Rover {
-  _position: Point;
-  _direction: Direction;
+  private _position: Point;
+  private _direction: Direction;
   readonly cpu: CPU;
   readonly map: Map;
 
   constructor(
     cpu: CPU,
+    map: Map,
     position: Point = [0, 0],
-    direction: Direction = Direction.North,
-    map: Map = { width: 10, height: 10 }
+    direction: Direction = Direction.North
   ) {
     this._position = position;
     this._direction = direction;
@@ -88,8 +91,4 @@ export class Rover {
   private set direction(value: Direction) {
     this._direction = value;
   }
-}
-
-function modulo(n: number, m: number) {
-  return ((n % m) + m) % m;
 }
