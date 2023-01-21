@@ -82,7 +82,9 @@ export class Rover {
     const y = modulo(value[1], this.map.height);
 
     if (this.map.hasObstacleAt(x, y)) {
-      return;
+      throw new Error(
+        `Invalid position (there is an obstacle at [${x}, ${y}])`
+      );
     }
 
     this._position = [x, y];

@@ -39,8 +39,8 @@ describe("Mars Rover integration", () => {
 
       r.run("rfrf");
 
-      expect(r.position).toStrictEqual([0, 1]);
-      expect(r.direction).toBe(Direction.South);
+      expect(r.position).toStrictEqual([0, 0]);
+      expect(r.direction).toBe(Direction.East);
     });
   });
 });

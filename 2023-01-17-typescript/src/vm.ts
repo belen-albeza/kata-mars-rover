@@ -15,22 +15,30 @@ export class VM {
   run(program: string, vehicle: Vehicle) {
     const commands = parseProgram(program);
     for (const cmd of commands) {
-      switch (cmd) {
-        case Command.NoOp:
-          break;
-        case Command.Forward:
-          vehicle.move(1);
-          break;
-        case Command.Backward:
-          vehicle.move(-1);
-          break;
-        case Command.Left:
-          vehicle.turn(-1);
-          break;
-        case Command.Right:
-          vehicle.turn(1);
-          break;
+      try {
+        this.executeCommand(cmd, vehicle);
+      } catch (error: unknown) {
+        break; // abort running all the other commands
       }
+    }
+  }
+
+  private executeCommand(cmd: Command, vehicle: Vehicle) {
+    switch (cmd) {
+      case Command.NoOp:
+        break;
+      case Command.Forward:
+        vehicle.move(1);
+        break;
+      case Command.Backward:
+        vehicle.move(-1);
+        break;
+      case Command.Left:
+        vehicle.turn(-1);
+        break;
+      case Command.Right:
+        vehicle.turn(1);
+        break;
     }
   }
 }

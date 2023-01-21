@@ -175,7 +175,9 @@ describe("Rover", () => {
       map.hasObstacleAt.mockReturnValue(true);
       const r = new Rover(anyCPU(), map, [0, 0], Direction.East);
 
-      r.move(1);
+      expect(() => {
+        r.move(1);
+      }).toThrowError();
 
       expect(r.position).toStrictEqual([0, 0]);
     });

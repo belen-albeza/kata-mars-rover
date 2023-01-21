@@ -72,4 +72,15 @@ describe("VM", () => {
 
     expect(r.turn).toHaveBeenCalledWith(1);
   });
+
+  it("Stops the execution of the program when the vehicle collides with an obstacle", () => {
+    const vm = new VM();
+    const r = anyVehicle();
+    r.move.mockImplementation(() => {
+      throw new Error("Collision with obstacle");
+    });
+
+    vm.run("fff", r);
+    expect(r.move).toHaveBeenCalledTimes(1);
+  });
 });
