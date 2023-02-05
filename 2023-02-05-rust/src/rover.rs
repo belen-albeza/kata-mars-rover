@@ -1,7 +1,7 @@
 use clap::ValueEnum;
 use std::fmt;
 
-use crate::commands::Command;
+use crate::commands::Opcode;
 
 pub type Point = (i32, i32);
 
@@ -42,7 +42,7 @@ impl Rover {
         }
     }
 
-    pub fn run(&self, _: &[Command]) {}
+    pub fn run(&self, _: &[Opcode]) {}
 }
 
 impl fmt::Display for Rover {

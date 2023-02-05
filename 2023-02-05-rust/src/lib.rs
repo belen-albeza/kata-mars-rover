@@ -1,7 +1,8 @@
 pub mod commands;
+pub mod cpu;
 pub mod rover;
 
-use commands::Command;
+use commands::Opcode;
 use rover::{Direction, Rover};
 
 pub fn run(x: i32, y: i32, position: Direction, commands: &str) {
@@ -13,9 +14,9 @@ pub fn run(x: i32, y: i32, position: Direction, commands: &str) {
     println!("{}", r);
 }
 
-fn parse_commands(commands: &str) -> Vec<Command> {
+fn parse_commands(commands: &str) -> Vec<Opcode> {
     commands
         .chars()
-        .map(|x| Command::try_from(x).unwrap())
+        .map(|x| Opcode::try_from(x).unwrap())
         .collect()
 }
