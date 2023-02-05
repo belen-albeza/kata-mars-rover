@@ -1,6 +1,8 @@
+use clap::ValueEnum;
 use std::fmt;
 
-use clap::ValueEnum;
+use crate::commands::Command;
+
 pub type Point = (i32, i32);
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
@@ -39,6 +41,8 @@ impl Rover {
             direction,
         }
     }
+
+    pub fn run(&self, _: &[Command]) {}
 }
 
 impl fmt::Display for Rover {

@@ -16,9 +16,13 @@ struct Args {
     /// Direction the rover is facing
     #[arg(short, long = "dir", value_enum, default_value_t = rover::Direction::North)]
     direction: rover::Direction,
+
+    /// Commands for the rover
+    #[arg(short, long = "cmd", default_value_t = String::new())]
+    commands: String,
 }
 
 fn main() {
     let args = Args::parse();
-    run(args.x, args.y, args.direction);
+    run(args.x, args.y, args.direction, &args.commands);
 }
