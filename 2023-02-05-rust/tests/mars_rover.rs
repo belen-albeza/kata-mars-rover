@@ -14,6 +14,6 @@ fn test_runs_noop_program() {
 
 #[test]
 fn test_runs_rover_moving_and_turning() {
-    let result = run(0, 0, Direction::East, "ffbl");
-    assert_eq!(result, Ok("(1, 0) N".to_string()));
+    let result = run(0, 0, Direction::East, "ffblrr");
+    assert_eq!(result, Ok("(1, 0) S".to_string()));
 }

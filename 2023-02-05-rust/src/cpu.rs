@@ -1,5 +1,6 @@
 use crate::commands::{
     BackwardCommand, Command, ForwardCommand, LeftCommand, Movable, NoOpCommand, Opcode,
+    RightCommand,
 };
 
 #[derive(Debug)]
@@ -38,6 +39,7 @@ fn build_command(opcode: Opcode, target: &mut impl Movable) -> Box<dyn Command +
         Opcode::Forward => Box::new(ForwardCommand::new(target)),
         Opcode::Backward => Box::new(BackwardCommand::new(target)),
         Opcode::Left => Box::new(LeftCommand::new(target)),
+        Opcode::Right => Box::new(RightCommand::new(target)),
     }
 }
 
@@ -129,6 +131,23 @@ mod tests {
         vehicle
             .expect_turn()
             .with(predicate::eq(-1))
+            .return_const(())
+            .times(1);
+
+        let result = cpu.run(&mut vehicle);
+
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    pub fn test_run_makes_target_turn_right() {
+        let program = vec![Opcode::Right];
+        let cpu = Cpu::new(&program);
+        let mut vehicle = MockVehicle::new();
+
+        vehicle
+            .expect_turn()
+            .with(predicate::eq(1))
             .return_const(())
             .times(1);
 

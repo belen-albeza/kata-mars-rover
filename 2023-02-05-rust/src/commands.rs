@@ -8,6 +8,7 @@ pub enum Opcode {
     Forward,
     Backward,
     Left,
+    Right,
 }
 
 impl TryFrom<char> for Opcode {
@@ -19,6 +20,7 @@ impl TryFrom<char> for Opcode {
             'f' | 'F' => Ok(Self::Forward),
             'b' | 'B' => Ok(Self::Backward),
             'l' | 'L' => Ok(Self::Left),
+            'r' | 'R' => Ok(Self::Right),
             _ => Err(format!("Unrecognized command `{}`", raw)),
         }
     }
@@ -100,6 +102,24 @@ impl<'a> Command for LeftCommand<'a> {
     }
 }
 
+#[derive(Debug)]
+pub struct RightCommand<'a> {
+    target: &'a mut dyn Movable,
+}
+
+impl<'a> RightCommand<'a> {
+    pub fn new(target: &'a mut impl Movable) -> Self {
+        Self { target }
+    }
+}
+
+impl<'a> Command for RightCommand<'a> {
+    fn execute(&mut self) -> Result<(), String> {
+        self.target.turn(1);
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,6 +130,7 @@ mod tests {
         assert_eq!(Opcode::try_from('f'), Ok(Opcode::Forward));
         assert_eq!(Opcode::try_from('b'), Ok(Opcode::Backward));
         assert_eq!(Opcode::try_from('l'), Ok(Opcode::Left));
+        assert_eq!(Opcode::try_from('r'), Ok(Opcode::Right));
         assert!(Opcode::try_from('*').is_err());
     }
 }

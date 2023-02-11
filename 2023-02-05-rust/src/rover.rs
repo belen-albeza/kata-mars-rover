@@ -197,4 +197,32 @@ mod tests {
         r.turn(-1);
         assert_eq!(r.direction, Direction::South);
     }
+
+    #[test]
+    fn test_turns_right_when_facing_north() {
+        let mut r = Rover::new((0, 0), Direction::North);
+        r.turn(1);
+        assert_eq!(r.direction, Direction::East);
+    }
+
+    #[test]
+    fn test_turns_right_when_facing_east() {
+        let mut r = Rover::new((0, 0), Direction::East);
+        r.turn(1);
+        assert_eq!(r.direction, Direction::South);
+    }
+
+    #[test]
+    fn test_turns_right_when_facing_south() {
+        let mut r = Rover::new((0, 0), Direction::South);
+        r.turn(1);
+        assert_eq!(r.direction, Direction::West);
+    }
+
+    #[test]
+    fn test_turns_right_when_facing_west() {
+        let mut r = Rover::new((0, 0), Direction::West);
+        r.turn(1);
+        assert_eq!(r.direction, Direction::North);
+    }
 }
