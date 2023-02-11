@@ -9,10 +9,10 @@ use rover::Rover;
 
 pub fn run(x: i32, y: i32, position: Direction, commands: &str) -> Result<String, String> {
     let mut r = Rover::new((x, y), position);
-    let program = Cpu::parse(commands).unwrap();
+    let program = Cpu::parse(commands)?;
     let cpu = Cpu::new(&program);
 
-    cpu.run(&mut r).unwrap();
+    cpu.run(&mut r)?;
 
     Ok(format!("{}", r))
 }
