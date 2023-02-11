@@ -22,6 +22,19 @@ impl Direction {
             Self::West => (-1, 0),
         }
     }
+
+    pub fn turn(&self, dir: i32) -> Self {
+        let directions = [
+            Direction::North,
+            Direction::East,
+            Direction::South,
+            Direction::West,
+        ];
+        let current_index = directions.iter().position(|x| x == self).unwrap();
+        let index = (current_index as i32 + dir.signum()).rem_euclid(directions.len() as i32);
+
+        directions[index as usize]
+    }
 }
 
 impl fmt::Display for Direction {
@@ -75,6 +88,10 @@ impl Movable for Rover {
 
         self.position.0 += delta.0;
         self.position.1 += delta.1;
+    }
+
+    fn turn(&mut self, dir: i32) {
+        self.direction = self.direction.turn(dir);
     }
 }
 
@@ -151,5 +168,33 @@ mod tests {
         let mut r = Rover::new((0, 0), Direction::West);
         r.advance(-1);
         assert_eq!(r.position, (1, 0));
+    }
+
+    #[test]
+    fn test_turns_left_when_facing_north() {
+        let mut r = Rover::new((0, 0), Direction::North);
+        r.turn(-1);
+        assert_eq!(r.direction, Direction::West);
+    }
+
+    #[test]
+    fn test_turns_left_when_facing_east() {
+        let mut r = Rover::new((0, 0), Direction::East);
+        r.turn(-1);
+        assert_eq!(r.direction, Direction::North);
+    }
+
+    #[test]
+    fn test_turns_left_when_facing_south() {
+        let mut r = Rover::new((0, 0), Direction::South);
+        r.turn(-1);
+        assert_eq!(r.direction, Direction::East);
+    }
+
+    #[test]
+    fn test_turns_left_when_facing_west() {
+        let mut r = Rover::new((0, 0), Direction::West);
+        r.turn(-1);
+        assert_eq!(r.direction, Direction::South);
     }
 }

@@ -7,6 +7,7 @@ pub enum Opcode {
     NoOp,
     Forward,
     Backward,
+    Left,
 }
 
 impl TryFrom<char> for Opcode {
@@ -17,6 +18,7 @@ impl TryFrom<char> for Opcode {
             ' ' => Ok(Self::NoOp),
             'f' | 'F' => Ok(Self::Forward),
             'b' | 'B' => Ok(Self::Backward),
+            'l' | 'L' => Ok(Self::Left),
             _ => Err(format!("Unrecognized command `{}`", raw)),
         }
     }
@@ -26,23 +28,10 @@ pub trait Command: Debug {
     fn execute(&mut self) -> Result<(), String> {
         Ok(())
     }
-
-    fn opcode(&self) -> Opcode;
 }
 
-impl PartialEq for dyn Command {
-    fn eq(&self, other: &Self) -> bool {
-        self.opcode() == other.opcode()
-    }
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct NoOpCommand {}
-impl Command for NoOpCommand {
-    fn opcode(&self) -> Opcode {
-        Opcode::NoOp
-    }
-}
 
 impl NoOpCommand {
     pub fn new() -> Self {
@@ -50,8 +39,11 @@ impl NoOpCommand {
     }
 }
 
+impl Command for NoOpCommand {}
+
 pub trait Movable: Debug {
     fn advance(&mut self, dir: i32);
+    fn turn(&mut self, dir: i32);
 }
 
 #[derive(Debug)]
@@ -69,10 +61,6 @@ impl<'a> Command for ForwardCommand<'a> {
     fn execute(&mut self) -> Result<(), String> {
         self.target.advance(1);
         Ok(())
-    }
-
-    fn opcode(&self) -> Opcode {
-        Opcode::Forward
     }
 }
 
@@ -92,9 +80,23 @@ impl<'a> Command for BackwardCommand<'a> {
         self.target.advance(-1);
         Ok(())
     }
+}
 
-    fn opcode(&self) -> Opcode {
-        Opcode::Backward
+#[derive(Debug)]
+pub struct LeftCommand<'a> {
+    target: &'a mut dyn Movable,
+}
+
+impl<'a> LeftCommand<'a> {
+    pub fn new(target: &'a mut impl Movable) -> Self {
+        Self { target }
+    }
+}
+
+impl<'a> Command for LeftCommand<'a> {
+    fn execute(&mut self) -> Result<(), String> {
+        self.target.turn(-1);
+        Ok(())
     }
 }
 
@@ -107,6 +109,7 @@ mod tests {
         assert_eq!(Opcode::try_from(' '), Ok(Opcode::NoOp));
         assert_eq!(Opcode::try_from('f'), Ok(Opcode::Forward));
         assert_eq!(Opcode::try_from('b'), Ok(Opcode::Backward));
+        assert_eq!(Opcode::try_from('l'), Ok(Opcode::Left));
         assert!(Opcode::try_from('*').is_err());
     }
 }

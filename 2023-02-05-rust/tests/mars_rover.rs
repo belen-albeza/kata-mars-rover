@@ -13,7 +13,7 @@ fn test_runs_noop_program() {
 }
 
 #[test]
-fn test_runs_rover_moving_forward_and_backward() {
-    let result = run(0, 0, Direction::East, "ffb");
-    assert_eq!(result, Ok("(1, 0) E".to_string()));
+fn test_runs_rover_moving_and_turning() {
+    let result = run(0, 0, Direction::East, "ffbl");
+    assert_eq!(result, Ok("(1, 0) N".to_string()));
 }

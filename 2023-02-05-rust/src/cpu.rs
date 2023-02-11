@@ -1,4 +1,6 @@
-use crate::commands::{BackwardCommand, Command, ForwardCommand, Movable, NoOpCommand, Opcode};
+use crate::commands::{
+    BackwardCommand, Command, ForwardCommand, LeftCommand, Movable, NoOpCommand, Opcode,
+};
 
 #[derive(Debug)]
 pub struct Cpu {
@@ -19,22 +21,23 @@ impl Cpu {
 
     pub fn run(&self, target: &mut impl Movable) -> Result<(), String> {
         for opcode in &self.program {
-            Self::step(*opcode, target)?
+            self.step(*opcode, target)?
         }
         Ok(())
     }
 
-    fn step(opcode: Opcode, target: &mut impl Movable) -> Result<(), String> {
-        let mut command = Self::parse_opcode(opcode, target);
+    fn step(&self, opcode: Opcode, target: &mut impl Movable) -> Result<(), String> {
+        let mut command = build_command(opcode, target);
         command.execute()
     }
+}
 
-    fn parse_opcode(opcode: Opcode, target: &mut impl Movable) -> Box<dyn Command + '_> {
-        match opcode {
-            Opcode::NoOp => Box::new(NoOpCommand::new()),
-            Opcode::Forward => Box::new(ForwardCommand::new(target)),
-            Opcode::Backward => Box::new(BackwardCommand::new(target)),
-        }
+fn build_command(opcode: Opcode, target: &mut impl Movable) -> Box<dyn Command + '_> {
+    match opcode {
+        Opcode::NoOp => Box::new(NoOpCommand::new()),
+        Opcode::Forward => Box::new(ForwardCommand::new(target)),
+        Opcode::Backward => Box::new(BackwardCommand::new(target)),
+        Opcode::Left => Box::new(LeftCommand::new(target)),
     }
 }
 
@@ -48,6 +51,7 @@ mod tests {
         pub Vehicle {}
         impl Movable for Vehicle {
             fn advance(&mut self, dir: i32);
+            fn turn(&mut self, dir: i32);
         }
     }
 
@@ -74,8 +78,8 @@ mod tests {
     #[test]
     pub fn test_run_returns_ok_when_no_issues() {
         let program = vec![Opcode::NoOp];
-        let mut vehicle = MockVehicle::new();
         let cpu = Cpu::new(&program);
+        let mut vehicle = MockVehicle::new();
 
         let result = cpu.run(&mut vehicle);
 
@@ -85,8 +89,8 @@ mod tests {
     #[test]
     pub fn test_run_makes_target_move_forward() {
         let program = vec![Opcode::Forward];
-        let mut vehicle = MockVehicle::new();
         let cpu = Cpu::new(&program);
+        let mut vehicle = MockVehicle::new();
 
         vehicle
             .expect_advance()
@@ -102,11 +106,28 @@ mod tests {
     #[test]
     pub fn test_run_makes_target_move_backwards() {
         let program = vec![Opcode::Backward];
-        let mut vehicle = MockVehicle::new();
         let cpu = Cpu::new(&program);
+        let mut vehicle = MockVehicle::new();
 
         vehicle
             .expect_advance()
+            .with(predicate::eq(-1))
+            .return_const(())
+            .times(1);
+
+        let result = cpu.run(&mut vehicle);
+
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    pub fn test_run_makes_target_turn_left() {
+        let program = vec![Opcode::Left];
+        let cpu = Cpu::new(&program);
+        let mut vehicle = MockVehicle::new();
+
+        vehicle
+            .expect_turn()
             .with(predicate::eq(-1))
             .return_const(())
             .times(1);
