@@ -1,7 +1,7 @@
 use clap::ValueEnum;
 use std::fmt;
 
-use crate::commands::Opcode;
+use crate::commands::{Movable, Opcode};
 
 pub type Point = (i32, i32);
 
@@ -11,6 +11,17 @@ pub enum Direction {
     East,
     South,
     West,
+}
+
+impl Direction {
+    pub fn normal(&self) -> Point {
+        match self {
+            Self::North => (0, -1),
+            Self::East => (1, 0),
+            Self::South => (0, 1),
+            Self::West => (-1, 0),
+        }
+    }
 }
 
 impl fmt::Display for Direction {
@@ -55,6 +66,18 @@ impl fmt::Display for Rover {
     }
 }
 
+impl Movable for Rover {
+    fn advance(&mut self, dir: i32) {
+        let delta = (
+            self.direction.normal().0 * dir,
+            self.direction.normal().1 * dir,
+        );
+
+        self.position.0 += delta.0;
+        self.position.1 += delta.1;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -72,5 +95,33 @@ mod tests {
         let display = format!("{}", r);
 
         assert_eq!(display, "(1, 2) E");
+    }
+
+    #[test]
+    fn test_advances_forward_when_facing_north() {
+        let mut r = Rover::new((0, 5), Direction::North);
+        r.advance(1);
+        assert_eq!(r.position, (0, 4));
+    }
+
+    #[test]
+    fn test_advances_forward_when_facing_east() {
+        let mut r = Rover::new((0, 0), Direction::East);
+        r.advance(1);
+        assert_eq!(r.position, (1, 0));
+    }
+
+    #[test]
+    fn test_advances_forward_when_facing_south() {
+        let mut r = Rover::new((0, 0), Direction::South);
+        r.advance(1);
+        assert_eq!(r.position, (0, 1));
+    }
+
+    #[test]
+    fn test_advances_forward_when_facing_west() {
+        let mut r = Rover::new((5, 0), Direction::West);
+        r.advance(1);
+        assert_eq!(r.position, (4, 0));
     }
 }

@@ -2,21 +2,17 @@ pub mod commands;
 pub mod cpu;
 pub mod rover;
 
-use commands::Opcode;
-use rover::{Direction, Rover};
+pub use rover::Direction;
 
-pub fn run(x: i32, y: i32, position: Direction, commands: &str) {
-    let r = Rover::new((x, y), position);
-    let program = parse_commands(commands);
+use cpu::Cpu;
+use rover::Rover;
 
-    r.run(&program);
+pub fn run(x: i32, y: i32, position: Direction, commands: &str) -> Result<String, String> {
+    let mut r = Rover::new((x, y), position);
+    let program = Cpu::parse(commands).unwrap();
+    let cpu = Cpu::new(&program);
 
-    println!("{}", r);
-}
+    cpu.run(&mut r).unwrap();
 
-fn parse_commands(commands: &str) -> Vec<Opcode> {
-    commands
-        .chars()
-        .map(|x| Opcode::try_from(x).unwrap())
-        .collect()
+    Ok(format!("{}", r))
 }

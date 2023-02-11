@@ -1,5 +1,5 @@
 use clap::Parser;
-use kata_mars_rover::{rover, run};
+use kata_mars_rover::{run, Direction};
 
 /// Mars Rover kata
 #[derive(Parser, Debug)]
@@ -14,8 +14,8 @@ struct Args {
     y: i32,
 
     /// Direction the rover is facing
-    #[arg(short, long = "dir", value_enum, default_value_t = rover::Direction::North)]
-    direction: rover::Direction,
+    #[arg(short, long = "dir", value_enum, default_value_t = Direction::North)]
+    direction: Direction,
 
     /// Commands for the rover
     #[arg(short, long = "cmd", default_value_t = String::new())]
@@ -24,5 +24,6 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    run(args.x, args.y, args.direction, &args.commands);
+    let output = run(args.x, args.y, args.direction, &args.commands).unwrap();
+    println!("{}", output);
 }

@@ -21,7 +21,7 @@ impl TryFrom<char> for Opcode {
 }
 
 pub trait Command: Debug {
-    fn execute(&self) -> Result<(), String> {
+    fn execute(&mut self) -> Result<(), String> {
         Ok(())
     }
 
@@ -49,23 +49,23 @@ impl NoOpCommand {
 }
 
 pub trait Movable: Debug {
-    fn advance(&self, dir: i32);
+    fn advance(&mut self, dir: i32);
 }
 
 #[derive(Debug)]
 pub struct ForwardCommand<'a> {
-    target: &'a dyn Movable,
+    target: &'a mut dyn Movable,
 }
 
 impl<'a> ForwardCommand<'a> {
-    pub fn new(target: &'a impl Movable) -> Self {
+    pub fn new(target: &'a mut impl Movable) -> Self {
         Self { target }
     }
 }
 
 impl<'a> Command for ForwardCommand<'a> {
-    fn execute(&self) -> Result<(), String> {
-        println!("Trying to move its target");
+    fn execute(&mut self) -> Result<(), String> {
+        self.target.advance(1);
         Ok(())
     }
 
