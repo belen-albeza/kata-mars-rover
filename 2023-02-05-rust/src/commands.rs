@@ -6,6 +6,7 @@ use std::fmt::Debug;
 pub enum Opcode {
     NoOp,
     Forward,
+    Backward,
 }
 
 impl TryFrom<char> for Opcode {
@@ -15,6 +16,7 @@ impl TryFrom<char> for Opcode {
         match raw {
             ' ' => Ok(Self::NoOp),
             'f' | 'F' => Ok(Self::Forward),
+            'b' | 'B' => Ok(Self::Backward),
             _ => Err(format!("Unrecognized command `{}`", raw)),
         }
     }
@@ -74,6 +76,28 @@ impl<'a> Command for ForwardCommand<'a> {
     }
 }
 
+#[derive(Debug)]
+pub struct BackwardCommand<'a> {
+    target: &'a mut dyn Movable,
+}
+
+impl<'a> BackwardCommand<'a> {
+    pub fn new(target: &'a mut impl Movable) -> Self {
+        Self { target }
+    }
+}
+
+impl<'a> Command for BackwardCommand<'a> {
+    fn execute(&mut self) -> Result<(), String> {
+        self.target.advance(-1);
+        Ok(())
+    }
+
+    fn opcode(&self) -> Opcode {
+        Opcode::Backward
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -82,6 +106,7 @@ mod tests {
     fn test_build_command_from_char() {
         assert_eq!(Opcode::try_from(' '), Ok(Opcode::NoOp));
         assert_eq!(Opcode::try_from('f'), Ok(Opcode::Forward));
+        assert_eq!(Opcode::try_from('b'), Ok(Opcode::Backward));
         assert!(Opcode::try_from('*').is_err());
     }
 }
