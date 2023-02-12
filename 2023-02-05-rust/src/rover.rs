@@ -5,7 +5,10 @@ use crate::commands::{Movable, Opcode};
 
 pub type Point = (i32, i32);
 
-pub type Map = (i32, i32);
+pub trait RoverMap: fmt::Debug {
+    fn width(&self) -> usize;
+    fn height(&self) -> usize;
+}
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum Direction {
@@ -54,15 +57,15 @@ impl fmt::Display for Direction {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Rover {
+#[derive(Debug, Clone, Copy)]
+pub struct Rover<'a> {
     position: Point,
     direction: Direction,
-    map: Map,
+    map: &'a dyn RoverMap,
 }
 
-impl Rover {
-    pub fn new(position: Point, direction: Direction, map: Map) -> Self {
+impl<'a> Rover<'a> {
+    pub fn new(position: Point, direction: Direction, map: &'a impl RoverMap) -> Self {
         Self {
             position,
             direction,
@@ -73,7 +76,7 @@ impl Rover {
     pub fn run(&self, _: &[Opcode]) {}
 }
 
-impl fmt::Display for Rover {
+impl<'a> fmt::Display for Rover<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -83,15 +86,15 @@ impl fmt::Display for Rover {
     }
 }
 
-impl Movable for Rover {
+impl<'a> Movable for Rover<'a> {
     fn advance(&mut self, dir: i32) {
         let delta = (
             self.direction.normal().0 * dir,
             self.direction.normal().1 * dir,
         );
 
-        self.position.0 = (self.position.0 + delta.0).rem_euclid(self.map.0);
-        self.position.1 = (self.position.1 + delta.1).rem_euclid(self.map.1);
+        self.position.0 = (self.position.0 + delta.0).rem_euclid(self.map.width() as i32);
+        self.position.1 = (self.position.1 + delta.1).rem_euclid(self.map.height() as i32);
     }
 
     fn turn(&mut self, dir: i32) {
@@ -102,21 +105,40 @@ impl Movable for Rover {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use mockall::*;
 
-    fn any_map() -> Map {
-        (10, 10)
+    mock! {
+        #[derive(Debug)]
+        MarsMap {}
+        impl RoverMap for MarsMap {
+            fn width(&self) -> usize;
+            fn height(&self) -> usize;
+        }
+    }
+
+    fn any_map() -> impl RoverMap {
+        any_map_with_size(10, 10)
+    }
+
+    fn any_map_with_size(width: usize, height: usize) -> impl RoverMap {
+        let mut map = MockMarsMap::new();
+        map.expect_width().return_const(width);
+        map.expect_height().return_const(height);
+        map
     }
 
     #[test]
     fn test_new_rover() {
-        let r = Rover::new((1, 2), Direction::East, any_map());
+        let map = any_map();
+        let r = Rover::new((1, 2), Direction::East, &map);
         assert_eq!(r.position, (1, 2));
         assert_eq!(r.direction, Direction::East);
     }
 
     #[test]
     fn test_display_shows_position_and_dir() {
-        let r = Rover::new((1, 2), Direction::East, any_map());
+        let map = any_map();
+        let r = Rover::new((1, 2), Direction::East, &map);
         let display = format!("{}", r);
 
         assert_eq!(display, "(1, 2) E");
@@ -124,140 +146,160 @@ mod tests {
 
     #[test]
     fn test_advances_forward_when_facing_north() {
-        let mut r = Rover::new((0, 5), Direction::North, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 5), Direction::North, &map);
         r.advance(1);
         assert_eq!(r.position, (0, 4));
     }
 
     #[test]
     fn test_advances_forward_when_facing_east() {
-        let mut r = Rover::new((0, 0), Direction::East, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::East, &map);
         r.advance(1);
         assert_eq!(r.position, (1, 0));
     }
 
     #[test]
     fn test_advances_forward_when_facing_south() {
-        let mut r = Rover::new((0, 0), Direction::South, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::South, &map);
         r.advance(1);
         assert_eq!(r.position, (0, 1));
     }
 
     #[test]
     fn test_advances_forward_when_facing_west() {
-        let mut r = Rover::new((5, 0), Direction::West, any_map());
+        let map = any_map();
+        let mut r = Rover::new((5, 0), Direction::West, &map);
         r.advance(1);
         assert_eq!(r.position, (4, 0));
     }
 
     #[test]
     fn test_advances_backwards_when_facing_north() {
-        let mut r = Rover::new((0, 0), Direction::North, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::North, &map);
         r.advance(-1);
         assert_eq!(r.position, (0, 1));
     }
 
     #[test]
     fn test_advances_backwards_when_facing_east() {
-        let mut r = Rover::new((5, 0), Direction::East, any_map());
+        let map = any_map();
+        let mut r = Rover::new((5, 0), Direction::East, &map);
         r.advance(-1);
         assert_eq!(r.position, (4, 0));
     }
 
     #[test]
     fn test_advances_backwards_when_facing_south() {
-        let mut r = Rover::new((0, 5), Direction::South, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 5), Direction::South, &map);
         r.advance(-1);
         assert_eq!(r.position, (0, 4));
     }
 
     #[test]
     fn test_advances_backwards_when_facing_west() {
-        let mut r = Rover::new((0, 0), Direction::West, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::West, &map);
         r.advance(-1);
         assert_eq!(r.position, (1, 0));
     }
 
     #[test]
     fn test_turns_left_when_facing_north() {
-        let mut r = Rover::new((0, 0), Direction::North, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::North, &map);
         r.turn(-1);
         assert_eq!(r.direction, Direction::West);
     }
 
     #[test]
     fn test_turns_left_when_facing_east() {
-        let mut r = Rover::new((0, 0), Direction::East, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::East, &map);
         r.turn(-1);
         assert_eq!(r.direction, Direction::North);
     }
 
     #[test]
     fn test_turns_left_when_facing_south() {
-        let mut r = Rover::new((0, 0), Direction::South, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::South, &map);
         r.turn(-1);
         assert_eq!(r.direction, Direction::East);
     }
 
     #[test]
     fn test_turns_left_when_facing_west() {
-        let mut r = Rover::new((0, 0), Direction::West, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::West, &map);
         r.turn(-1);
         assert_eq!(r.direction, Direction::South);
     }
 
     #[test]
     fn test_turns_right_when_facing_north() {
-        let mut r = Rover::new((0, 0), Direction::North, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::North, &map);
         r.turn(1);
         assert_eq!(r.direction, Direction::East);
     }
 
     #[test]
     fn test_turns_right_when_facing_east() {
-        let mut r = Rover::new((0, 0), Direction::East, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::East, &map);
         r.turn(1);
         assert_eq!(r.direction, Direction::South);
     }
 
     #[test]
     fn test_turns_right_when_facing_south() {
-        let mut r = Rover::new((0, 0), Direction::South, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::South, &map);
         r.turn(1);
         assert_eq!(r.direction, Direction::West);
     }
 
     #[test]
     fn test_turns_right_when_facing_west() {
-        let mut r = Rover::new((0, 0), Direction::West, any_map());
+        let map = any_map();
+        let mut r = Rover::new((0, 0), Direction::West, &map);
         r.turn(1);
         assert_eq!(r.direction, Direction::North);
     }
 
     #[test]
     fn test_wraps_around_top_edge() {
-        let mut r = Rover::new((0, 0), Direction::North, (10, 10));
+        let map = any_map_with_size(10, 10);
+        let mut r = Rover::new((0, 0), Direction::North, &map);
         r.advance(1);
         assert_eq!(r.position, (0, 9));
     }
 
     #[test]
     fn test_move_wraps_around_right_edge() {
-        let mut r = Rover::new((9, 0), Direction::East, (10, 10));
+        let map = any_map_with_size(10, 10);
+        let mut r = Rover::new((9, 0), Direction::East, &map);
         r.advance(1);
         assert_eq!(r.position, (0, 0));
     }
 
     #[test]
     fn test_move_wraps_around_bottom_edge() {
-        let mut r = Rover::new((0, 9), Direction::South, (10, 10));
+        let map = any_map_with_size(10, 10);
+        let mut r = Rover::new((0, 9), Direction::South, &map);
         r.advance(1);
         assert_eq!(r.position, (0, 0));
     }
 
     #[test]
     fn test_wraps_around_left_edge() {
-        let mut r = Rover::new((0, 0), Direction::West, (10, 10));
+        let map = any_map_with_size(10, 10);
+        let mut r = Rover::new((0, 0), Direction::West, &map);
         r.advance(1);
         assert_eq!(r.position, (9, 0));
     }
