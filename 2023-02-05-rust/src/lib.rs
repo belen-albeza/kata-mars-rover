@@ -10,7 +10,7 @@ use cpu::Cpu;
 use rover::Rover;
 
 pub fn run(x: i32, y: i32, position: Direction, commands: &str) -> Result<String, String> {
-    let map = Map::new(10, 10);
+    let map = Map::default();
     let mut r = Rover::new((x, y), position, &map);
     let program = Cpu::parse(commands)?;
     let cpu = Cpu::new(&program);
