@@ -24,6 +24,6 @@ Requirements:
 - [2023-01-17](2023-01-17-typescript/) (TypeScript)
   - Classic VM style
 - [2023-02-05](2023-02-05-rust/) (Rust)
-  - Commander pattern
+  - Command pattern
   - CLI bin (run `cargo run -- --help` to see usage)
  
