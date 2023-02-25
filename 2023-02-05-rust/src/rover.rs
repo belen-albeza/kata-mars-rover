@@ -8,6 +8,7 @@ pub type Point = (i32, i32);
 pub trait RoverMap: fmt::Debug {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
+    fn has_obstacle_at(&self, x: i32, y: i32) -> bool;
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
@@ -113,6 +114,7 @@ mod tests {
         impl RoverMap for MarsMap {
             fn width(&self) -> usize;
             fn height(&self) -> usize;
+            fn has_obstacle_at(&self, x: i32, y: i32) -> bool;
         }
     }
 
