@@ -52,7 +52,7 @@ mod tests {
         #[derive(Debug)]
         pub Vehicle {}
         impl Movable for Vehicle {
-            fn advance(&mut self, dir: i32);
+            fn advance(&mut self, dir: i32) -> Result<(), String>;
             fn turn(&mut self, dir: i32);
         }
     }
@@ -89,6 +89,17 @@ mod tests {
     }
 
     #[test]
+    pub fn test_run_returns_error_when_command_fails() {
+        let program = vec![Opcode::Forward];
+        let cpu = Cpu::new(&program);
+        let mut vehicle = MockVehicle::new();
+        vehicle.expect_advance().return_const(Err(":(".to_string()));
+
+        let result = cpu.run(&mut vehicle);
+        assert!(result.is_err());
+    }
+
+    #[test]
     pub fn test_run_makes_target_move_forward() {
         let program = vec![Opcode::Forward];
         let cpu = Cpu::new(&program);
@@ -97,7 +108,7 @@ mod tests {
         vehicle
             .expect_advance()
             .with(predicate::eq(1))
-            .return_const(())
+            .return_const(Ok(()))
             .times(1);
 
         let result = cpu.run(&mut vehicle);
@@ -114,7 +125,7 @@ mod tests {
         vehicle
             .expect_advance()
             .with(predicate::eq(-1))
-            .return_const(())
+            .return_const(Ok(()))
             .times(1);
 
         let result = cpu.run(&mut vehicle);

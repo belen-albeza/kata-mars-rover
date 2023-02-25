@@ -25,9 +25,13 @@ pub fn run(
     let program = Cpu::parse(commands)?;
     let cpu = Cpu::new(&program);
 
-    cpu.run(&mut r)?;
+    let result = cpu.run(&mut r);
+    let output = format!("{}", r);
 
-    Ok(format!("{}", r))
+    match result {
+        Err(_) => Err(output),
+        Ok(_) => Ok(output),
+    }
 }
 
 fn read_file(file_path: PathBuf) -> String {

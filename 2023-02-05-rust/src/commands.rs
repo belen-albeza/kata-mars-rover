@@ -44,7 +44,7 @@ impl NoOpCommand {
 impl Command for NoOpCommand {}
 
 pub trait Movable: Debug {
-    fn advance(&mut self, dir: i32);
+    fn advance(&mut self, dir: i32) -> Result<(), String>;
     fn turn(&mut self, dir: i32);
 }
 
@@ -61,8 +61,7 @@ impl<'a> ForwardCommand<'a> {
 
 impl<'a> Command for ForwardCommand<'a> {
     fn execute(&mut self) -> Result<(), String> {
-        self.target.advance(1);
-        Ok(())
+        self.target.advance(1)
     }
 }
 
@@ -79,8 +78,7 @@ impl<'a> BackwardCommand<'a> {
 
 impl<'a> Command for BackwardCommand<'a> {
     fn execute(&mut self) -> Result<(), String> {
-        self.target.advance(-1);
-        Ok(())
+        self.target.advance(-1)
     }
 }
 

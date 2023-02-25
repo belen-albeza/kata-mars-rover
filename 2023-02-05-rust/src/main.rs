@@ -30,6 +30,9 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let output = run(args.x, args.y, args.direction, &args.commands, args.map).unwrap();
-    println!("{}", output);
+    let result = run(args.x, args.y, args.direction, &args.commands, args.map);
+    match result {
+        Err(output) => println!("Rover halted.\n{}", output),
+        Ok(output) => println!("{}", output),
+    }
 }
