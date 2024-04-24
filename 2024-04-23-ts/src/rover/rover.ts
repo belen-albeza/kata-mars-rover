@@ -3,7 +3,13 @@ export type Position = {
   y: number;
 };
 
-export type Direction = "north" | "east" | "south" | "west";
+const directions = ["north", "east", "south", "west"] as const;
+
+export type Direction = (typeof directions)[number];
+
+export function isDirection(value: string): value is Direction {
+  return directions.includes(value as Direction);
+}
 
 export default class Rover {
   #position: Position;

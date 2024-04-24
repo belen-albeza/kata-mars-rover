@@ -12,13 +12,13 @@ Develop an API that translates the commands sent from Earth to instructions that
 
 ### Requirements
 
-- [ ] You are given the initial **starting point** `(x, y)` of a rover and the **direction** `(N, S, E, W)` it is facing.
+- [x] You are given the initial **starting point** `(x, y)` of a rover and the **direction** `(N, S, E, W)` it is facing.
 
 - [ ] The rover receives a character sequence of **commands**.
 
-- [ ] Implement the commands that **move** the rover **forward/backward** `(f, b)`. 
+- [ ] Implement the commands that **move** the rover **forward/backward** `(f, b)`.
 
-- [ ] Implement the commands that **turn** the rover **left/right** `(l, r)`. 
+- [ ] Implement the commands that **turn** the rover **left/right** `(l, r)`.
 
 - [ ] Implement **wrapping** at edges. But be careful, planets are spheres.
 
@@ -31,4 +31,3 @@ Develop an API that translates the commands sent from Earth to instructions that
 - No red phases while refactoring.
 
 - Be careful about edge cases and exceptions. We cannot afford to lose a Mars rover just because the developers overlooked a null pointer.
-
