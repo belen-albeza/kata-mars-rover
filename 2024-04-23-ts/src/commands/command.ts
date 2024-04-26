@@ -5,8 +5,10 @@ export function isOpcode(value: string): value is Opcode {
   return opcodes.includes(value as Opcode);
 }
 
+export interface CommandTarget {}
+
 export interface Command {
-  run: () => {};
+  run: (target: CommandTarget) => {};
 }
 
 interface CommandConstructor {

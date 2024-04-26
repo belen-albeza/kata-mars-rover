@@ -2,7 +2,8 @@ import { parseArgs } from "util";
 import Rover from "./rover";
 import type { Direction } from "./rover";
 import { isDirection } from "./rover/rover";
-import { isOpcode, commandFromOpcode } from "./rover/commands";
+import { isOpcode, commandFromOpcode } from "./commands";
+import Controller from "./controller";
 
 const args = parseArgs({
   args: Bun.argv.slice(2),
@@ -48,5 +49,10 @@ const commands = rawOpcodes.map((x) => {
 });
 
 const rover = new Rover({ x, y }, dir);
-
 console.log(`Rover ${rover}`);
+
+const controller = new Controller(commands, rover);
+console.log("Running commands…");
+controller.run();
+
+console.log(`----\nRover ${rover}`);

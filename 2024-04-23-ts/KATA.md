@@ -14,7 +14,7 @@ Develop an API that translates the commands sent from Earth to instructions that
 
 - [x] You are given the initial **starting point** `(x, y)` of a rover and the **direction** `(N, S, E, W)` it is facing.
 
-- [ ] The rover receives a character sequence of **commands**.
+- [x] The rover receives a character sequence of **commands**.
 
 - [ ] Implement the commands that **move** the rover **forward/backward** `(f, b)`.
 

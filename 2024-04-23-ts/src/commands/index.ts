@@ -1,2 +1,2 @@
-export type { Opcode, Command } from "./command";
+export type { Opcode, Command, CommandTarget } from "./command";
 export { isOpcode, commandFromOpcode } from "./command";
