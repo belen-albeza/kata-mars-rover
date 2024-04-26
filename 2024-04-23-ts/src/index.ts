@@ -2,6 +2,7 @@ import { parseArgs } from "util";
 import Rover from "./rover";
 import type { Direction } from "./rover";
 import { isDirection } from "./rover/rover";
+import { isOpcode, commandFromOpcode } from "./rover/commands";
 
 const args = parseArgs({
   args: Bun.argv.slice(2),
@@ -36,7 +37,16 @@ if (!isDirection(args.values.dir ?? "")) {
 }
 const dir = args.values.dir as Direction;
 
+const rawOpcodes = args.positionals.at(0)?.split("") ?? [];
+
+const commands = rawOpcodes.map((x) => {
+  if (isOpcode(x)) {
+    return commandFromOpcode(x);
+  }
+
+  throw new Error(`Invalid opcode: ${x}`);
+});
+
 const rover = new Rover({ x, y }, dir);
 
-console.log(args);
 console.log(`Rover ${rover}`);
