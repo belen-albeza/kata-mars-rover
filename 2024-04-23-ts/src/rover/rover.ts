@@ -43,6 +43,14 @@ export default class Rover implements CommandTarget {
     this.#position = { x, y };
   }
 
+  turn(delta: number) {
+    const directions = ["north", "east", "south", "west"] as Direction[];
+    const currentIndex = directions.indexOf(this.direction);
+    const i = modulo(currentIndex + delta, directions.length);
+
+    this.#direction = directions[i];
+  }
+
   get #xdir() {
     switch (this.#direction) {
       case "east":
@@ -64,4 +72,8 @@ export default class Rover implements CommandTarget {
         return 0;
     }
   }
+}
+
+function modulo(n: number, m: number) {
+  return ((n % m) + m) % m;
 }

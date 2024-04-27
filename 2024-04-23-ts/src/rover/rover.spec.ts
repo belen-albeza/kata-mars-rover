@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import Rover from "./rover";
+import Rover, { type Direction } from "./rover";
 
 describe("Rover", () => {
   it("Gets created with the given position and direction", () => {
@@ -32,5 +32,35 @@ describe("Rover movement", () => {
     const r = new Rover({ x: 3, y: 3 }, "west");
     r.move(2);
     expect(r.position).toEqual({ x: 1, y: 3 });
+  });
+});
+
+describe("Rover turning", () => {
+  const anyRoverWithDir = (dir: Direction) => {
+    return new Rover({ x: 0, y: 0 }, dir);
+  };
+
+  it("Turns anticlockwise from north", () => {
+    const r = anyRoverWithDir("north");
+    r.turn(-1);
+    expect(r.direction).toBe("west");
+  });
+
+  it("Turns clockwise from north", () => {
+    const r = anyRoverWithDir("north");
+    r.turn(1);
+    expect(r.direction).toBe("east");
+  });
+
+  it("Turns clockwise n times from west", () => {
+    const r = anyRoverWithDir("west");
+    r.turn(3);
+    expect(r.direction).toBe("south");
+  });
+
+  it("Turns anticlockwise n times from east", () => {
+    const r = anyRoverWithDir("east");
+    r.turn(3);
+    expect(r.direction).toBe("north");
   });
 });
