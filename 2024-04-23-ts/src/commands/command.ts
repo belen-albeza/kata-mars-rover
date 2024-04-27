@@ -1,3 +1,5 @@
+import ForwardCommand, { type ForwardTarget } from "./forward";
+
 const opcodes = ["l", "r", "f", "b"] as const;
 export type Opcode = (typeof opcodes)[number];
 
@@ -5,17 +7,19 @@ export function isOpcode(value: string): value is Opcode {
   return opcodes.includes(value as Opcode);
 }
 
-export interface CommandTarget {}
+export interface CommandTarget extends ForwardTarget {}
 
 export interface Command {
-  run: (target: CommandTarget) => {};
+  run: (target: CommandTarget) => void;
 }
 
 interface CommandConstructor {
   new (): Command;
 }
 
-const commands: Map<Opcode, CommandConstructor> = new Map();
+const commands: Map<Opcode, CommandConstructor> = new Map([
+  ["f", ForwardCommand],
+]);
 
 export function commandFromOpcode(opcode: Opcode): Command {
   let cmd = commands.get(opcode);

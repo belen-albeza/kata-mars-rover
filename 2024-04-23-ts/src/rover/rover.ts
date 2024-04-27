@@ -1,6 +1,8 @@
+import type { CommandTarget } from "../commands";
+
 export type Position = {
-  x: number;
-  y: number;
+  readonly x: number;
+  readonly y: number;
 };
 
 const directions = ["north", "east", "south", "west"] as const;
@@ -11,7 +13,7 @@ export function isDirection(value: string): value is Direction {
   return directions.includes(value as Direction);
 }
 
-export default class Rover {
+export default class Rover implements CommandTarget {
   #position: Position;
   #direction: Direction;
 
@@ -32,5 +34,34 @@ export default class Rover {
 
   get position() {
     return this.#position;
+  }
+
+  move(delta: number) {
+    const [incx, incy] = [this.#xdir, this.#ydir];
+    const x = this.position.x + incx * delta;
+    const y = this.position.y + incy * delta;
+    this.#position = { x, y };
+  }
+
+  get #xdir() {
+    switch (this.#direction) {
+      case "east":
+        return 1;
+      case "west":
+        return -1;
+      default:
+        return 0;
+    }
+  }
+
+  get #ydir() {
+    switch (this.#direction) {
+      case "north":
+        return -1;
+      case "south":
+        return 1;
+      default:
+        return 0;
+    }
   }
 }
