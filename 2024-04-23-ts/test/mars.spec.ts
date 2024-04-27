@@ -18,8 +18,8 @@ describe("Mars rover", () => {
     expect(rover.position).toEqual({ x: 0, y: 1 });
   });
 
-  it("Follows command to turn left", () => {
-    const [rover, controller] = anyRoverAndController("lll");
+  it("Follows command to turn left and right", () => {
+    const [rover, controller] = anyRoverAndController("llrrr");
     controller.run();
     expect(rover.direction).toBe("east");
   });

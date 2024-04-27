@@ -4,6 +4,7 @@ import {
   ForwardCommand,
   BackwardCommand,
   LeftCommand,
+  RightCommand,
 } from "./command";
 
 describe("Command builder", () => {
@@ -17,5 +18,9 @@ describe("Command builder", () => {
 
   it("Returns a LeftCommand for `l` opcode", () => {
     expect(commandFromOpcode("l")).toBeInstanceOf(LeftCommand);
+  });
+
+  it("Returns a RightCommand for `r` opcode", () => {
+    expect(commandFromOpcode("r")).toBeInstanceOf(RightCommand);
   });
 });

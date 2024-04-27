@@ -6,7 +6,7 @@ const anyTarget = () => ({
 });
 
 describe("Left", () => {
-  it("Turns the target anticlockwise", () => {
+  it("Turns the target 1 unit anticlockwise", () => {
     const cmd = new LeftCommand();
     const target = anyTarget();
 

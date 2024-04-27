@@ -18,7 +18,7 @@ Develop an API that translates the commands sent from Earth to instructions that
 
 - [x] Implement the commands that **move** the rover **forward/backward** `(f, b)`.
 
-- [ ] Implement the commands that **turn** the rover **left/right** `(l, r)`.
+- [x] Implement the commands that **turn** the rover **left/right** `(l, r)`.
 
 - [ ] Implement **wrapping** at edges. But be careful, planets are spheres.
 
