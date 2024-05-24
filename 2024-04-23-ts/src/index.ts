@@ -23,20 +23,36 @@ const args = parseArgs({
       short: "d",
       default: "north",
     },
+    width: {
+      type: "string",
+      short: "w",
+      default: "20",
+    },
+    height: {
+      type: "string",
+      short: "h",
+      default: "20",
+    },
   },
   allowPositionals: true,
 });
 
-const x = parseInt(args.values.x ?? "", 10);
-const y = parseInt(args.values.y ?? "", 10);
+const x = parseInt(args.values.x ?? "", 0);
+const y = parseInt(args.values.y ?? "", 0);
 if (Number.isNaN(x) || Number.isNaN(y)) {
   throw new Error("X and Y must be numbers");
 }
 
+const width = parseInt(args.values.width ?? "", 20);
+const height = parseInt(args.values.height ?? "", 20);
+if (Number.isNaN(width) || Number.isNaN(height)) {
+  throw new Error("Width and Height must be numbers");
+}
+
+const dir = args.values.dir as Direction;
 if (!isDirection(args.values.dir ?? "")) {
   throw new Error("Dir must be: north, east, south or west");
 }
-const dir = args.values.dir as Direction;
 
 const rawOpcodes = args.positionals.at(0)?.split("") ?? [];
 
@@ -48,7 +64,7 @@ const commands = rawOpcodes.map((x) => {
   throw new Error(`Invalid opcode: ${x}`);
 });
 
-const rover = new Rover({ x, y }, dir);
+const rover = new Rover({ x, y }, dir, { width, height });
 console.log(`Rover ${rover}`);
 
 const controller = new Controller(commands, rover);

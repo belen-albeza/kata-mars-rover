@@ -13,13 +13,24 @@ export function isDirection(value: string): value is Direction {
   return directions.includes(value as Direction);
 }
 
+export interface RoverMap {
+  readonly width: number;
+  readonly height: number;
+}
+
 export default class Rover implements CommandTarget {
   #position: Position;
   #direction: Direction;
+  readonly #map: RoverMap;
 
-  constructor(position: Position, direction: Direction) {
+  constructor(
+    position: Position,
+    direction: Direction,
+    map: RoverMap = { width: 10, height: 10 }
+  ) {
     this.#position = position;
     this.#direction = direction;
+    this.#map = map;
   }
 
   toString() {
@@ -38,8 +49,8 @@ export default class Rover implements CommandTarget {
 
   move(delta: number) {
     const [incx, incy] = [this.#xdir, this.#ydir];
-    const x = this.position.x + incx * delta;
-    const y = this.position.y + incy * delta;
+    const x = modulo(this.position.x + incx * delta, this.#map.width);
+    const y = modulo(this.position.y + incy * delta, this.#map.height);
     this.#position = { x, y };
   }
 

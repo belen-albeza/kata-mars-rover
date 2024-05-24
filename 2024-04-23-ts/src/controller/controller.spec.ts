@@ -1,7 +1,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import Controller from "./controller";
 
-const anyTarget = () => ({});
+const anyTarget = () => ({ move: mock(), turn: mock() });
 const anyCommand = () => ({ run: mock() });
 
 describe("Controller", () => {

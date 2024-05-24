@@ -33,6 +33,32 @@ describe("Rover movement", () => {
     r.move(2);
     expect(r.position).toEqual({ x: 1, y: 3 });
   });
+
+  describe("Wrapping at the edges", () => {
+    it("Wraps at the north edge", () => {
+      const r = new Rover({ x: 0, y: 0 }, "north", { width: 5, height: 5 });
+      r.move(1);
+      expect(r.position.y).toBe(4);
+    });
+
+    it("Wraps at the south edge", () => {
+      const r = new Rover({ x: 0, y: 4 }, "south", { width: 5, height: 5 });
+      r.move(1);
+      expect(r.position.y).toBe(0);
+    });
+
+    it("Wraps at the right edge", () => {
+      const r = new Rover({ x: 4, y: 0 }, "east", { width: 5, height: 5 });
+      r.move(1);
+      expect(r.position.x).toBe(0);
+    });
+
+    it("Wraps at the left edge", () => {
+      const r = new Rover({ x: 0, y: 0 }, "west", { width: 5, height: 5 });
+      r.move(1);
+      expect(r.position.x).toBe(4);
+    });
+  });
 });
 
 describe("Rover turning", () => {
